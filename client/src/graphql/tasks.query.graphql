@@ -1,0 +1,21 @@
+query GetTasks {
+  tasks {
+    id
+    title
+    subtitle
+    notes
+    completed
+    priority
+    userId
+    parentId
+    children {
+      id
+      title
+      subtitle
+      notes
+      completed
+      priority
+      userId
+    }
+  }
+}

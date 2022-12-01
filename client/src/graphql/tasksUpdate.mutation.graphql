@@ -1,0 +1,13 @@
+mutation UpdateOneTask($data: TaskUpdateInput!, $taskId: Int!) {
+  updateOneTask(data: $data, where: { id: $taskId }) {
+    id
+    title
+    subtitle
+    notes
+    completed
+    priority
+    userId
+    parentId
+    children
+  }
+}

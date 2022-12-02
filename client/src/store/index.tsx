@@ -55,7 +55,6 @@ const Provider = (props: { children: any }) => {
       )
       setCurrentTaskDisplayed(currentTaskDisplayed)
     } else if (id) {
-      console.log('FUNCTION VIEW...', id)
       const currentTaskDisplayed: Task = tasks?.find(
         (task: Task) => task.id === id,
       )

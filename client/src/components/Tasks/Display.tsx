@@ -28,8 +28,6 @@ export const TaskDisplay: FC<TaskDisplayProps> = ({ currentTask }) => {
     selectTaskToView()
   }
 
-  console.log('DISPLAY...')
-
   const handleEdit = () => setToggleForm(!toggleForm)
 
   if (toggleForm)

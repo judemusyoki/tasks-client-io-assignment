@@ -1,7 +1,6 @@
 import { useTasks } from '../../store'
 import { Task } from '../../types'
 import { Priority } from '../../types/constants'
-import { TaskList } from '../Tasks'
 import FlagIcon from '@mui/icons-material/Flag'
 import KeyboardDoubleArrowDownIcon from '@mui/icons-material/KeyboardDoubleArrowDown'
 import { Box, ListItemIcon } from '@mui/material'
@@ -30,7 +29,6 @@ export const TaskItem: FC<TaskItemProps> = ({ task }) => {
   }
 
   const selectTask = (id: number) => {
-    console.log('SELECTED...', id)
     selectTaskToView(id, task.parentId && task.parentId)
   }
 

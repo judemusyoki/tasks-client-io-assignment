@@ -13,12 +13,12 @@ const { ALL } = Filter
 
 const MainContainer = () => {
   const { currentTaskDisplayed, currentTaskToEdit } = useTasks()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, setFilter] = useState(ALL)
+  const [filter, setFilter] = useState(ALL)
 
   const handleFilter = (selection: Filter) => {
     setFilter(selection)
   }
+
   
   return (
     <Box sx={mainContainer}>
@@ -27,7 +27,7 @@ const MainContainer = () => {
           <Typography variant={'h5'}>Your Tasks</Typography>
 
           <TaskFilters handleFilter={handleFilter} />
-          <TaskList />
+          <TaskList filter={filter} />
         </Grid>
       </Box>
       <Divider />
@@ -47,7 +47,6 @@ const MainContainer = () => {
   )
 }
 
-// Anything within Home component will be able to use withProvider
 export default MainContainer
 
 const mainContainer = {
@@ -60,6 +59,3 @@ const mainContainer = {
 const gridContainer = {
   width: '50%',
 }
-// const noteContainer = {
-//   width: '50%',
-// }

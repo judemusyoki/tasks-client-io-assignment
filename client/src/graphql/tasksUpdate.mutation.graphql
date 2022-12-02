@@ -8,6 +8,5 @@ mutation UpdateOneTask($data: TaskUpdateInput!, $taskId: Int!) {
     priority
     userId
     parentId
-    children
   }
 }

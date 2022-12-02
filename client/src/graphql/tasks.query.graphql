@@ -8,14 +8,5 @@ query GetTasks {
     priority
     userId
     parentId
-    children {
-      id
-      title
-      subtitle
-      notes
-      completed
-      priority
-      userId
-    }
   }
 }

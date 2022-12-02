@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  //provider = "typegraphql-prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator typegraphql {
+  provider           = "typegraphql-prisma"
+  output             = "../prisma/generated/type-graphql"
+  emitTranspiledCode = true
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  userName String
+
+  createdAt DateTime @default(now())
+
+  tasks Task[]
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  title     String
+  subtitle  String?
+  notes     String?
+  completed Boolean  @default(false)
+  priority  Priority @default(LOW)
+
+  parentId Int?
+  parent   Task? @relation("Parent", fields: [parentId], references: [id])
+
+  children Task[] @relation("Parent")
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}

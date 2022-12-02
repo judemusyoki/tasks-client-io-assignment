@@ -33,7 +33,7 @@ function App() {
         backgroundImage: `url(${'https://www.transparenttextures.com/patterns/cubes.png'})`,
       }}
       container
-      justifyContent='center'
+      justifyContent="center"
       alignItems={matches ? 'flex-start' : 'center'}
     >
       <Grid item>
@@ -47,7 +47,7 @@ function App() {
               onChange={() => setDarkMode(!darkMode)}
             />
           }
-          label='Dark Mode'
+          label="Dark Mode"
         />
         <Footer />
       </Grid>

@@ -18,28 +18,28 @@ export const TaskFilters: FC<TaskFiltersProps> = ({
 
   return (
     <Box marginTop={1}>
-      <Box p={1} component='span'>
+      <Box p={1} component="span">
         <Button
-          variant='contained'
-          color='secondary'
+          variant="contained"
+          color="secondary"
           onClick={() => handleSelection(ALL)}
         >
           {ALL}
         </Button>
       </Box>
-      <Box p={1} component='span'>
+      <Box p={1} component="span">
         <Button
-          variant='contained'
-          color='secondary'
+          variant="contained"
+          color="secondary"
           onClick={() => handleSelection(COMPLETED)}
         >
           {COMPLETED}
         </Button>
       </Box>
-      <Box p={1} component='span'>
+      <Box p={1} component="span">
         <Button
-          variant='contained'
-          color='secondary'
+          variant="contained"
+          color="secondary"
           onClick={() => handleSelection(NOT_COMPLETED)}
         >
           {DUE}

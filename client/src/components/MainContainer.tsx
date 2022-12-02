@@ -1,4 +1,4 @@
-import { withProvider, useTasks } from '../store'
+import { useTasks } from '../store'
 import { Filter } from '../types/constants'
 import { TaskList } from './Tasks'
 import { TaskDisplay } from './Tasks/Display'
@@ -12,14 +12,14 @@ import React, { useState } from 'react'
 const { ALL } = Filter
 
 const MainContainer = () => {
-  // const { currentTaskDisplayed, currentTaskToEdit } = useTasks()
+  const { currentTaskDisplayed, currentTaskToEdit } = useTasks()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_, setFilter] = useState(ALL)
 
   const handleFilter = (selection: Filter) => {
     setFilter(selection)
   }
-
+  
   return (
     <Box sx={mainContainer}>
       <Box sx={gridContainer} p={2}>
@@ -32,7 +32,7 @@ const MainContainer = () => {
       </Box>
       <Divider />
 
-      {/* <Box sx={gridContainer} p={2}>
+      <Box sx={gridContainer} p={2}>
         <Grid container direction="column">
           <Grid item>
             {currentTaskDisplayed ? (
@@ -42,7 +42,7 @@ const MainContainer = () => {
             )}
           </Grid>
         </Grid>
-      </Box> */}
+      </Box>
     </Box>
   )
 }

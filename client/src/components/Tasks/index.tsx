@@ -23,8 +23,6 @@ export const TaskList: FC<TaskListProps> = ({ subTasks }) => {
 
   const filteredTasks = FilterTasks(currentTasks, ALL)
 
-  console.log('FILTERED', filteredTasks)
-
   return (
     <List dense={true}>
       {filteredTasks?.map((task: Task) => {

@@ -11,16 +11,15 @@ export type TaskContext = {
   currentTaskDisplayed: Task | undefined
   currentTaskToEdit: Task | undefined
   addTask: (newTask: Task, tasks: Task[]) => void
-  editTask: (currentTask: Task) => void
+  updateTask: (currentTask: Task) => void
   selectTaskToView: (id?: number, parentId?: number) => void
   selectTaskToEdit: (id?: number, parentId?: number) => void
-  removeTask: (id: number) => void
+  removeTask: (id: number | undefined) => void
   toggleTask: (id: number) => void
 }
 const addTask = (newTask: Task, tasks: Task[]) => {
   if (tasks) {
     return [...tasks, newTask]
-    // setTasks([...tasks, newTask])
   }
 }
 
@@ -31,7 +30,7 @@ const Context = createContext<TaskContext>(
     currentTaskDisplayed: undefined,
     currentTaskToEdit: undefined,
     addTask,
-    editTask: () => {},
+    updateTask: () => {},
     selectTaskToView: () => {},
     selectTaskToEdit: () => {},
     removeTask: () => {},
@@ -46,11 +45,7 @@ const Provider = (props: { children: any }) => {
 
   const [tasks, setTasks] = useLocalStorage('tasks', [...SAMPLE_DATA])
 
-  console.log('TASKS STORE...', tasks)
-
-  // lib function to add task
-
-  // Lib function to select which taks to display
+  // Function to select which taks to display
   const selectTaskToView = (id?: number, parentId?: number) => {
     if (id && parentId) {
       const parentTask = tasks?.find((task: Task) => task.id === parentId)
@@ -60,6 +55,7 @@ const Provider = (props: { children: any }) => {
       )
       setCurrentTaskDisplayed(currentTaskDisplayed)
     } else if (id) {
+      console.log('FUNCTION VIEW...', id)
       const currentTaskDisplayed: Task = tasks?.find(
         (task: Task) => task.id === id,
       )
@@ -69,7 +65,7 @@ const Provider = (props: { children: any }) => {
     }
   }
 
-  // Lib function to select which task to update task
+  // Function to select which task to update task
   const selectTaskToEdit = (id?: number, parentId?: number) => {
     if (id && parentId) {
       const parentTask = tasks?.find((task: Task) => task.id === parentId)
@@ -88,7 +84,8 @@ const Provider = (props: { children: any }) => {
     }
   }
 
-  const editTask = (newTask: Task) => {
+  // Function to update a task
+  const updateTask = (newTask: Task) => {
     if (newTask.parentId) {
       const parentTask: Task = tasks?.find(
         (task: Task) => task.id === newTask.parentId,
@@ -126,7 +123,7 @@ const Provider = (props: { children: any }) => {
     }
   }
 
-  const removeTask = (id: number) => {
+  const removeTask = (id: number | undefined ) => {
     const newTasks = tasks?.filter((task: Task) => task.id !== id)
     setTasks(newTasks)
     setCurrentTaskDisplayed(undefined)
@@ -154,7 +151,7 @@ const Provider = (props: { children: any }) => {
         currentTaskDisplayed,
         currentTaskToEdit,
         addTask,
-        editTask,
+        updateTask,
         selectTaskToView,
         selectTaskToEdit,
         removeTask,

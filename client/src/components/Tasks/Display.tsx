@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography'
 import React, { FC, useState } from 'react'
 
 type TaskDisplayProps = {
-  currentTask: Task
+  currentTask: Task | undefined
 }
 
 /**
@@ -28,6 +28,8 @@ export const TaskDisplay: FC<TaskDisplayProps> = ({ currentTask }) => {
     selectTaskToView()
   }
 
+  console.log('DISPLAY...')
+
   const handleEdit = () => setToggleForm(!toggleForm)
 
   if (toggleForm)
@@ -39,16 +41,16 @@ export const TaskDisplay: FC<TaskDisplayProps> = ({ currentTask }) => {
           <CloseIcon />
         </IconButton>
         <Box sx={taskItem} p={3}>
-          <Typography variant='h4'>{currentTask.title}</Typography>
-          <Typography variant='subtitle1'>{currentTask.subtitle}</Typography>
-          <Typography variant='body2'>{currentTask.notes}</Typography>
+          <Typography variant="h4">{currentTask?.title}</Typography>
+          <Typography variant="subtitle1">{currentTask?.subtitle}</Typography>
+          <Typography variant="body2">{currentTask?.notes}</Typography>
         </Box>
 
         <IconButton onClick={() => handleEdit()}>
           <EditIcon />
         </IconButton>
-
-        <IconButton onClick={() => removeTask(currentTask.id)}>
+        
+        <IconButton onClick={() => removeTask(currentTask?.id)}>
           <DeleteIcon />
         </IconButton>
       </Paper>

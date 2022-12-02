@@ -19,7 +19,7 @@ type TaskItemProps = {
 const { High, Low } = Priority
 
 export const TaskItem: FC<TaskItemProps> = ({ task }) => {
-  // const { toggleTask, selectTaskToView } = useTasks()
+  const { toggleTask, selectTaskToView } = useTasks()
   const [isExpanded, setIsExpanded] = useState(false)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,10 +30,9 @@ export const TaskItem: FC<TaskItemProps> = ({ task }) => {
   }
 
   const selectTask = (id: number) => {
-    // selectTaskToView(id, task.parentId && task.parentId)
+    console.log('SELECTED...', id)
+    selectTaskToView(id, task.parentId && task.parentId)
   }
-
-  console.log('task children..', task.children)
 
   const listItem = {
     padding: 0,
@@ -49,9 +48,9 @@ export const TaskItem: FC<TaskItemProps> = ({ task }) => {
       <ListItem key={task.id} sx={listItem}>
         <ListItemIcon>
           <Checkbox
-            edge='end'
+            edge="end"
             checked={task.completed}
-            // onClick={() => toggleTask(task?.id)}
+            onClick={() => toggleTask(task?.id)}
           />
         </ListItemIcon>
 
@@ -81,7 +80,7 @@ export const TaskItem: FC<TaskItemProps> = ({ task }) => {
 
       {task.children?.length !== 0 && (
         <Collapse
-          orientation='vertical'
+          orientation="vertical"
           in={isExpanded}
           sx={{ margin: 0, minHeight: '5px' }}
         >

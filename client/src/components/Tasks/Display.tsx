@@ -47,7 +47,7 @@ export const TaskDisplay: FC<TaskDisplayProps> = ({ currentTask }) => {
         <IconButton onClick={() => handleEdit()}>
           <EditIcon />
         </IconButton>
-        
+
         <IconButton onClick={() => removeTask(currentTask?.id)}>
           <DeleteIcon />
         </IconButton>

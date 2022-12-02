@@ -4,23 +4,19 @@
 import useLocalStorage from '../lib/useLocalStorage'
 import { Task } from '../types/index'
 import { SAMPLE_DATA } from './sampleData'
-import React, { useContext, useState, createContext } from 'react'
+import React, { useContext, useState, createContext, useEffect } from 'react'
+import { getParentTask } from '../lib'
 
 export type TaskContext = {
   tasks: Task[]
   currentTaskDisplayed: Task | undefined
-  currentTaskToEdit: Task | undefined
-  addTask: (newTask: Task, tasks: Task[]) => void
+  currentTaskToUpdate: Task | undefined
+  addTask: (newTask: Task) => void
   updateTask: (currentTask: Task) => void
   selectTaskToView: (id?: number, parentId?: number) => void
-  selectTaskToEdit: (id?: number, parentId?: number) => void
+  selectTaskToUpdate: (id?: number, parentId?: number) => void
   removeTask: (id: number | undefined) => void
   toggleTask: (id: number) => void
-}
-const addTask = (newTask: Task, tasks: Task[]) => {
-  if (tasks) {
-    return [...tasks, newTask]
-  }
 }
 
 const Context = createContext<TaskContext>(
@@ -28,11 +24,11 @@ const Context = createContext<TaskContext>(
   {
     tasks: [],
     currentTaskDisplayed: undefined,
-    currentTaskToEdit: undefined,
-    addTask,
+    currentTaskToUpdate: undefined,
+    addTask: () => {},
     updateTask: () => {},
     selectTaskToView: () => {},
-    selectTaskToEdit: () => {},
+    selectTaskToUpdate: () => {},
     removeTask: () => {},
     toggleTask: () => {},
   },
@@ -40,12 +36,59 @@ const Context = createContext<TaskContext>(
 
 const Provider = (props: { children: any }) => {
   const [currentTaskDisplayed, setCurrentTaskDisplayed] = useState<any>()
-  const [currentTaskToEdit, setCurrentTaskToEdit] = useState<any>()
+  const [currentTaskToUpdate, setCurrentTaskToUpdate] = useState<any>()
   const { children } = props
 
   const [tasks, setTasks] = useLocalStorage('tasks', [...SAMPLE_DATA])
 
-  // Function to select which taks to display
+  /**
+   * Function to get the parent task of the subTask
+   * @param subTask
+   * @returns
+   */
+  // const getParentTask = (subTask: Task): Task => {
+  //   return tasks?.find((task: Task) => task.id === subTask.parentId)
+  // }
+
+  const updateChildren = (task: Task, updatedSubTask: Task) => {
+    return task.children?.map((subTask) => {
+      if (subTask.id === updatedSubTask.id) {
+        return updatedSubTask
+      }
+      return subTask
+    })
+  }
+  console.log('tasks..', tasks)
+
+  /**
+   * Function to add a new task
+   * @param newTask
+   */
+  const addTask = (newTask: Task) => {
+    // Add new subTask
+    if (newTask.parentId) {
+      const parentTask = getParentTask(newTask, tasks)
+      parentTask?.children?.push(newTask)
+
+      const newTasks = tasks?.map((task: Task) => {
+        // Add updated parent task to newTasks array
+        if (task.id === parentTask.id) {
+          return parentTask
+        }
+        return task
+      })
+      // Replace tasks with new Tasks array and add new subTask
+      setTasks([...newTasks, newTask])
+    }
+    // Add new task
+    setTasks([...tasks, newTask])
+  }
+
+  /**
+   * Function to select which task to view
+   * @param id
+   * @param parentId
+   */
   const selectTaskToView = (id?: number, parentId?: number) => {
     if (id && parentId) {
       const parentTask = tasks?.find((task: Task) => task.id === parentId)
@@ -64,65 +107,67 @@ const Provider = (props: { children: any }) => {
     }
   }
 
-  // Function to select which task to update task
-  const selectTaskToEdit = (id?: number, parentId?: number) => {
+  /**
+   * Function to select which task to update
+   * @param id
+   * @param parentId
+   */
+  const selectTaskToUpdate = (id?: number, parentId?: number) => {
     if (id && parentId) {
       const parentTask = tasks?.find((task: Task) => task.id === parentId)
 
-      const currentTaskToEdit: Task = parentTask?.children?.find(
+      const currentTaskToUpdate: Task = parentTask?.children?.find(
         (task: Task) => task.id === id,
       )
-      setCurrentTaskToEdit(currentTaskToEdit)
+      setCurrentTaskToUpdate(currentTaskToUpdate)
     } else if (id) {
-      const currentTaskToEdit: Task = tasks?.find(
+      const currentTaskToUpdate: Task = tasks?.find(
         (task: Task) => task.id === id,
       )
-      setCurrentTaskToEdit(currentTaskToEdit)
+      setCurrentTaskToUpdate(currentTaskToUpdate)
     } else {
-      setCurrentTaskToEdit(undefined)
+      setCurrentTaskToUpdate(undefined)
     }
   }
 
-  // Function to update a task
-  const updateTask = (newTask: Task) => {
-    if (newTask.parentId) {
+  /**
+   * Function to update a task or subtask
+   * @param updatedTask
+   */
+  const updateTask = (updatedTask: Task) => {
+    if (updatedTask.parentId) {
+      // Update subTask
       const parentTask: Task = tasks?.find(
-        (task: Task) => task.id === newTask.parentId,
+        (task: Task) => task.id === updatedTask.parentId,
       )
+      const updatedSubTasks = updateChildren(parentTask, updatedTask)
+      parentTask.children = updatedSubTasks
 
-      if (parentTask?.children) {
-        // Update child task of ParentTask
-        const updatedParentTask = parentTask.children.map((childTask) => {
-          if (childTask.id === newTask.id) {
-            return newTask
-          }
-          return childTask
-        })
-        const newTasks = tasks?.map((task: Task) => {
-          // Add updated child task to newTasks array
-          if (task.id === newTask.id) {
-            return newTask
-          }
-          // Add updated parent task to newTasks array
-          if (task.id === parentTask.id) {
-            return parentTask
-          }
-          return task
-        })
-        setTasks(newTasks)
-      }
-    } else {
       const newTasks = tasks?.map((task: Task) => {
-        if (task.id === newTask.id) {
-          return newTask
+        // Add updated child task to newTasks array
+        if (task.id === updatedTask.id) {
+          return updatedTask
+        }
+        // Add updated parent task to newTasks array
+        if (task.id === parentTask.id) {
+          return parentTask
         }
         return task
       })
-      setTasks(newTasks)
+      setTasks([...newTasks])
     }
+
+    // Update task
+    const newTasks = tasks?.map((task: Task) => {
+      if (task.id === updatedTask.id) {
+        return updatedTask
+      }
+      return task
+    })
+    setTasks(newTasks)
   }
 
-  const removeTask = (id: number | undefined ) => {
+  const removeTask = (id: number | undefined) => {
     const newTasks = tasks?.filter((task: Task) => task.id !== id)
     setTasks(newTasks)
     setCurrentTaskDisplayed(undefined)
@@ -143,16 +188,18 @@ const Provider = (props: { children: any }) => {
     setTasks(newTasks)
   }
 
+  useEffect(() => {}, [tasks])
+
   return (
     <Context.Provider
       value={{
         tasks,
         currentTaskDisplayed,
-        currentTaskToEdit,
+        currentTaskToUpdate,
         addTask,
         updateTask,
         selectTaskToView,
-        selectTaskToEdit,
+        selectTaskToUpdate,
         removeTask,
         toggleTask,
       }}

@@ -3,35 +3,37 @@ import { Filter } from '../../types/constants'
 import { Task } from '../../types/index'
 import { TaskItem } from './Item'
 import List from '@mui/material/List'
-import React, { FC, useMemo } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 
 const { ALL, COMPLETED, NOT_COMPLETED } = Filter
 
 type TaskListProps = {
   filter: Filter
-  subTasks?: Task[] | undefined
 }
 
-export const TaskList: FC<TaskListProps> = ({ subTasks, filter }) => {
+export const TaskList: FC<TaskListProps> = ({ filter }) => {
   // const { tasks: fetchedTasks } = GetTasks()
+  const [localTasks, setLocalTasks] = useState<Task[]>()
   const { tasks } = useTasks()
 
-  const parentTasks = tasks?.filter((task: Task) => !task.parentId)
+  useEffect(() => {
+    setLocalTasks(tasks)
+  }, [tasks])
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const currentTasks: any = subTasks ? subTasks : parentTasks
+  const parentTasks = localTasks?.filter(
+    (localTask: Task) => !localTask.parentId,
+  )
 
   const filteredTasks = useMemo(() => {
-      switch (filter) {
-        case ALL:
-          return currentTasks
-        case COMPLETED:
-          return currentTasks.filter((task: Task) => task.completed)
-        case NOT_COMPLETED:
-          return currentTasks.filter((currentTask: Task) => !currentTask.completed)
-      }
-    
-  }, [currentTasks, filter])
+    switch (filter) {
+      case ALL:
+        return parentTasks
+      case COMPLETED:
+        return parentTasks?.filter((task: Task) => task.completed)
+      case NOT_COMPLETED:
+        return parentTasks?.filter((parentTask: Task) => !parentTask.completed)
+    }
+  }, [parentTasks, filter])
 
   return (
     <List dense={true}>

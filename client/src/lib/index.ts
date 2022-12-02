@@ -1,2 +1,2 @@
-export * from './addTask'
+export * from './getParentTask'
 export * from './selectTask'

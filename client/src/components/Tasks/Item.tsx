@@ -9,7 +9,7 @@ import Collapse from '@mui/material/Collapse'
 import ListItem from '@mui/material/ListItem'
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction'
 import ListItemText from '@mui/material/ListItemText'
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 
 type TaskItemProps = {
   task: Task
@@ -18,8 +18,10 @@ type TaskItemProps = {
 const { High, Low } = Priority
 
 export const TaskItem: FC<TaskItemProps> = ({ task }) => {
+  const [hasSubtasks, setHasSubtasks] = useState(false)
   const { toggleTask, selectTaskToView } = useTasks()
   const [isExpanded, setIsExpanded] = useState(false)
+  const [currentTask, setCurrentTask] = useState<Task>()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const flagColor: any = task?.priority === High ? 'error' : 'warning'
@@ -28,8 +30,13 @@ export const TaskItem: FC<TaskItemProps> = ({ task }) => {
     setIsExpanded(!isExpanded)
   }
 
+  useEffect(() => {
+    setHasSubtasks(task.children?.length !== 0)
+    setCurrentTask(task)
+  }, [task])
+
   const selectTask = (id: number) => {
-    selectTaskToView(id, task.parentId && task.parentId)
+    selectTaskToView(id, currentTask?.parentId && currentTask?.parentId)
   }
 
   const listItem = {
@@ -44,27 +51,29 @@ export const TaskItem: FC<TaskItemProps> = ({ task }) => {
   return (
     <Box sx={{ margin: 0, padding: 0 }}>
       <ListItem key={task.id} sx={listItem}>
-        <ListItemIcon>
-          <Checkbox
-            edge="end"
-            checked={task.completed}
-            onClick={() => toggleTask(task?.id)}
-          />
-        </ListItemIcon>
+        {currentTask && (
+          <ListItemIcon>
+            <Checkbox
+              edge="end"
+              checked={currentTask?.completed}
+              onClick={() => toggleTask(currentTask?.id)}
+            />
+          </ListItemIcon>
+        )}
 
         <ListItemText
-          primary={task.title}
+          primary={currentTask?.title}
           onClick={() => selectTask(task.id)}
         />
 
         <ListItemSecondaryAction onClick={() => toggleExpand()}>
-          {task.children?.length !== 0 && (
+          {hasSubtasks && (
             <ListItemIcon onClick={() => toggleExpand()}>
               <KeyboardDoubleArrowDownIcon />
             </ListItemIcon>
           )}
 
-          {task?.priority !== Low ? (
+          {currentTask?.priority !== Low ? (
             <ListItemIcon>
               <FlagIcon color={flagColor} />
             </ListItemIcon>
@@ -76,14 +85,14 @@ export const TaskItem: FC<TaskItemProps> = ({ task }) => {
         </ListItemSecondaryAction>
       </ListItem>
 
-      {task.children?.length !== 0 && (
+      {hasSubtasks && (
         <Collapse
           orientation="vertical"
           in={isExpanded}
           sx={{ margin: 0, minHeight: '5px' }}
         >
           <Box sx={{ marginLeft: 2, marginTop: 0, padding: 0 }}>
-            {task.children?.map((subTask: Task) => {
+            {currentTask?.children?.map((subTask: Task) => {
               return <TaskItem key={subTask.id} task={subTask} />
             })}
           </Box>

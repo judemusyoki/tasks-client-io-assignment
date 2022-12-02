@@ -10,10 +10,7 @@ import {
   Switch,
   useMediaQuery,
 } from '@mui/material'
-import { withProvider, useTasks, TaskContext } from './store'
-import { Task } from './types'
-import { SAMPLE_DATA } from './store/sampleData'
-import { addTask } from './lib/addTask'
+import { withProvider } from './store'
 
 function App() {
   const [darkMode, setDarkMode] = useState(false)

@@ -7,19 +7,18 @@ import { TaskInput } from './Tasks/Input'
 import { Divider, Typography } from '@mui/material'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 const { ALL } = Filter
 
 const MainContainer = () => {
-  const { currentTaskDisplayed, currentTaskToEdit } = useTasks()
+  const { currentTaskDisplayed, currentTaskToUpdate } = useTasks()
   const [filter, setFilter] = useState(ALL)
 
   const handleFilter = (selection: Filter) => {
     setFilter(selection)
   }
 
-  
   return (
     <Box sx={mainContainer}>
       <Box sx={gridContainer} p={2}>
@@ -38,7 +37,7 @@ const MainContainer = () => {
             {currentTaskDisplayed ? (
               <TaskDisplay currentTask={currentTaskDisplayed} />
             ) : (
-              <TaskInput task={currentTaskToEdit} />
+              <TaskInput task={currentTaskToUpdate} />
             )}
           </Grid>
         </Grid>

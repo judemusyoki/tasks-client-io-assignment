@@ -29,37 +29,37 @@ export const TaskInput: FC<TaskInputProps> = ({ task, handleToggle }) => {
   const { tasks, addTask, updateTask, selectTaskToView } = useTasks()
   const [, setLocalTask] = useState(task)
 
-  const newTask: Task = {
-    id: 400,
+  const initialValues: Task = {
+    id: tasks?.length,
     title: '',
     subtitle: '',
     notes: '',
     completed: false,
     priority: Low,
     parentId: undefined,
+    children: [],
   }
 
   const [currentTask, setCurrentTask] = useState<Task | undefined>({
-    ...newTask,
-    id: tasks?.length,
+    ...initialValues,
   })
+  const formTitle = task ? 'Update Task' : 'Create Task'
 
   useEffect(() => {
     if (task) {
       setCurrentTask(task)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [task])
 
   const handleSubmit = () => {
     if (currentTask && task && handleToggle) {
       updateTask(currentTask)
-      setCurrentTask(newTask)
-      setLocalTask(newTask)
+      setCurrentTask(initialValues)
+      setLocalTask(initialValues)
       handleToggle()
     } else if (currentTask) {
-      addTask(currentTask, tasks)
-      setCurrentTask(newTask)
+      addTask(currentTask)
+      setCurrentTask(initialValues)
     }
   }
 
@@ -80,7 +80,7 @@ export const TaskInput: FC<TaskInputProps> = ({ task, handleToggle }) => {
 
   return (
     <Grid container sx={inputContainer}>
-      <Typography variant={'h5'}>Create Task</Typography>
+      <Typography variant={'h5'}>{formTitle}</Typography>
       <Box m={1}>
         <TextField
           sx={textField}
@@ -114,6 +114,46 @@ export const TaskInput: FC<TaskInputProps> = ({ task, handleToggle }) => {
           minRows={9}
           style={{ width: 400 }}
         />
+      </Box>
+
+      <Box
+        m={1}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <Typography
+          sx={{
+            marginBottom: 2,
+          }}
+        >
+          Make Subtask
+        </Typography>
+        <FormControl sx={select}>
+          <InputLabel htmlFor="parentId">Select Task</InputLabel>
+          <Select
+            id="parentId"
+            name="parentId"
+            value={currentTask?.parentId}
+            onChange={(e) => handleChange(e)}
+          >
+            {tasks?.map((task, index) => {
+              if (index === tasks.length - 1)
+                return (
+                  <MenuItem key={task.id} value={undefined}>
+                    None
+                  </MenuItem>
+                )
+              if (!task.parentId)
+                return (
+                  <MenuItem key={task.id} value={task.id}>
+                    {task.title}
+                  </MenuItem>
+                )
+            })}
+          </Select>
+        </FormControl>
       </Box>
 
       <Box m={1}>

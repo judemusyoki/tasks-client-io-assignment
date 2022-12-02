@@ -41,15 +41,6 @@ const Provider = (props: { children: any }) => {
 
   const [tasks, setTasks] = useLocalStorage('tasks', [...SAMPLE_DATA])
 
-  /**
-   * Function to get the parent task of the subTask
-   * @param subTask
-   * @returns
-   */
-  // const getParentTask = (subTask: Task): Task => {
-  //   return tasks?.find((task: Task) => task.id === subTask.parentId)
-  // }
-
   const updateChildren = (task: Task, updatedSubTask: Task) => {
     return task.children?.map((subTask) => {
       if (subTask.id === updatedSubTask.id) {
@@ -58,7 +49,6 @@ const Provider = (props: { children: any }) => {
       return subTask
     })
   }
-  console.log('tasks..', tasks)
 
   /**
    * Function to add a new task

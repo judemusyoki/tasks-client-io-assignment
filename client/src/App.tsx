@@ -11,6 +11,7 @@ import {
   useMediaQuery,
 } from '@mui/material'
 import { withProvider } from './store'
+import { ThemeProvider } from '@emotion/react'
 
 function App() {
   const [darkMode, setDarkMode] = useState(false)
@@ -18,7 +19,8 @@ function App() {
   const matches = useMediaQuery(theme.breakpoints.down('xs')) // Anything size xs we return matches
 
   return (
-    <Grid
+    <ThemeProvider theme={theme}>
+ <Grid
       sx={{
         width: '100%',
         height: '100%',
@@ -49,6 +51,7 @@ function App() {
         <Footer />
       </Grid>
     </Grid>
+    </ThemeProvider>
   )
 }
 
